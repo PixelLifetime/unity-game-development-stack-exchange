@@ -1,0 +1,1 @@
+Note: this project doesn't include my best namings or best code examples. Things here are written just to work as examples. I do not consider scalability or performance to its highest possible levels, so yes you might encounter Smell Code here and there, sorry :).

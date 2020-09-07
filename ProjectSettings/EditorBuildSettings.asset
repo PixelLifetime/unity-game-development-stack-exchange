@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/{@#} Answers/Preload scene in unity/maingame.unity
+    guid: bfc9b1086cebeec49bab767276b047bd
+  - enabled: 1
+    path: Assets/{@#} Answers/Preload scene in unity/menu.unity
+    guid: 384672da07596e54cbaf661645275574
+  - enabled: 0
+    path: Assets/{@#} Answers/Preload multiple scenes at the same time and activate
+      them on demand in Unity. [Unity, async, simultaneous]/[Scene] Initialization.unity
+    guid: 8a48d98b87f8f14479e5703efa2f72cd
+  - enabled: 0
+    path: Assets/{@#} Answers/Preload multiple scenes at the same time and activate
+      them on demand in Unity. [Unity, async, simultaneous]/[Scene] Preload Scene
+      1.unity
+    guid: 19c1c96c496760c43a59a08db8d2a6ad
+  - enabled: 0
+    path: Assets/{@#} Answers/Preload multiple scenes at the same time and activate
+      them on demand in Unity. [Unity, async, simultaneous]/[Scene] Preload Scene
+      2.unity
+    guid: d707d53980ab79e4b8e10845c3f6c5ee
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: e94cf43940af73a42acc2c41e72035db, type: 2}
