@@ -80,7 +80,8 @@ public class MCHEditorWindow : EditorWindow
 			{
 				allowToggleVisibility = false, // At least one column must be there.
 				autoResize = true,
-				minWidth = 250.0f,
+				minWidth = 100.0f,
+				maxWidth = 250.0f,
 				canSort = true,
 				sortingArrowAlignment = TextAlignment.Right,
 				headerContent = new GUIContent("Name", "A name of an enemy."),
@@ -101,7 +102,7 @@ public class MCHEditorWindow : EditorWindow
 				allowToggleVisibility = true,
 				autoResize = true,
 				minWidth = 125.0f,
-				maxWidth = 175.0f,
+				maxWidth = 200.0f,
 				canSort = false,
 				sortingArrowAlignment = TextAlignment.Right,
 				headerContent = new GUIContent("Skin Color", "A color of an enemy skin."),
@@ -149,21 +150,41 @@ public class MCHEditorWindow : EditorWindow
 			this.Initialize();
 		}
 
-		//GUIStyle groupGUIStyle = new GUIStyle(GUI.skin.label)
-		//{
-		//	padding = new RectOffset(left: 50, right: 50, top: 50, bottom: 50)
-		//};
+		GUIStyle groupGUIStyle = new GUIStyle(GUI.skin.box)
+		{
+			//padding = new RectOffset(left: 50, right: 50, top: 50, bottom: 50) // For some reason doesn't work with group.
+			//border = new RectOffset(30, 30, 30, 30), // None work.
+		};
 
-		//GUI.BeginGroup(position: windowRect, style: groupGUIStyle);
+		//! Here we just basically move around group. It's not really padding, we are just setting position and reducing size.
+		Vector2 groupRectPaddingInWindow = new Vector2(20.0f, 20.0f);
+
+		Rect groupRect = new Rect(source: windowRect);
+
+		groupRect.x += groupRectPaddingInWindow.x;
+		groupRect.width -= groupRectPaddingInWindow.x * 2;
+
+		groupRect.y += groupRectPaddingInWindow.y;
+		groupRect.height -= groupRectPaddingInWindow.y * 2;
+
+		GUI.BeginGroup(position: groupRect, style: groupGUIStyle);
 		{   // Group Scope.
-			// Just enormously large view if you want it to span for the whole window. This is how it works [shrugs in confusion].
-			Rect positionalRectAreaOfScrollView = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
+
+			groupRect.x -= groupRectPaddingInWindow.x;
+			groupRect.y -= groupRectPaddingInWindow.y;
+
+			Rect positionalRectAreaOfScrollView = new Rect(source: groupRect);
 
 			// Create a `viewRect` since it should be separate from `rect` to avoid circular dependency.
-			Rect viewRect = new Rect(source: windowRect)
+			Rect viewRect = new Rect(source: groupRect)
 			{
 				width = this._multiColumnHeaderState.widthOfAllVisibleColumns, // Scroll max on X is basically a sum of width of columns.
+				//? Do not remove this hegiht. It's compensating for the size of bottom scroll slider when it appears, that is why the right side scroll slider appears.
+				//height = groupRect.height - columnHeight, // Remove `columnHeight` - basically size of header.
 			};
+
+			groupRect.width += groupRectPaddingInWindow.x * 2;
+			groupRect.height += groupRectPaddingInWindow.y * 2;
 
 			this._scrollPosition = GUI.BeginScrollView(
 				position: positionalRectAreaOfScrollView,
@@ -175,10 +196,10 @@ public class MCHEditorWindow : EditorWindow
 			{   // Scroll View Scope.
 
 				//? After debugging for a few hours - this is the only hack I have found to actually work to aleviate that scaling bug.
-				this._multiColumnHeaderWidth = Mathf.Max(windowRect.width + this._scrollPosition.x, this._multiColumnHeaderWidth);
+				this._multiColumnHeaderWidth = Mathf.Max(positionalRectAreaOfScrollView.width + this._scrollPosition.x, this._multiColumnHeaderWidth);
 
 				// This is a rect for our multi column table.
-				Rect columnRectPrototype = new Rect(source: windowRect)
+				Rect columnRectPrototype = new Rect(source: positionalRectAreaOfScrollView)
 				{
 					width = this._multiColumnHeaderWidth,
 					height = columnHeight, // This is basically a height of each column including header.
@@ -274,16 +295,18 @@ public class MCHEditorWindow : EditorWindow
 			}
 			GUI.EndScrollView(handleScrollWheel: true);
 		}
-		//GUI.EndGroup();
+		GUI.EndGroup();
 
 		if (!this._firstOnGUIIterationAfterInitialize)
 		{
-			float difference = 25.0f;
+			//! Uncomment this if you want to have appropriate ResizeToFit(). It brings jaggedness which I didn't like, so I have removed it knowing the implications.
 
-			//! Magic number `difference` is just a number to ensure that this width won't be exceeded by this auto scale bug. Lowering this number could cause it to reappear.
-			//? If you don't mind resizing to fit to sometimes overscale columns then just remove these next 2 lines of code.
-			if (this._multiColumnHeaderWidth - this._multiColumnHeaderState.widthOfAllVisibleColumns > difference)
-				this._multiColumnHeaderWidth -= difference;
+			//float difference = 50.0f;
+
+			////! Magic number `difference` is just a number to ensure that this width won't be exceeded by this auto scale bug. Lowering this number could cause it to reappear.
+			////? If you don't mind resizing to fit to sometimes overscale columns then just remove these next 2 lines of code.
+			//if (this._multiColumnHeaderWidth - this._multiColumnHeaderState.widthOfAllVisibleColumns > difference)
+			//	this._multiColumnHeaderWidth -= difference;
 		}
 
 		this._firstOnGUIIterationAfterInitialize = false;
